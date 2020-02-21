@@ -1,0 +1,10 @@
+%Ejercicio1_6
+factor (45)
+factorial (5)
+fix(4.56789)
+fix(-4.56789)
+floor(4.56789)
+floor(-4.56789)
+round(4.56789)
+round(-4.45678)
+floor(-4.45678)
