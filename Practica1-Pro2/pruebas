@@ -1,0 +1,14 @@
+while p <> NULL do begin
+		d:= getItem(p,L);
+		if d.partyname <> 'N' then begin
+			if valides <> 0 then writeLn('Party ', d.partyname, ' numvotes ', d.numvotes, ' (',(d.numvotes/valides)*100:0:2,'%)')
+			else writeLn('Party ', d.partyname, ' numvotes ', d.numvotes, ' (0.00%)');
+		end	
+		else writeLn('Party ', d.partyname, ' numvotes ', d.numvotes);
+		p:= next(p,L);
+	end;
+	if totalvoters <> 0 then  	
+	writeln('Participation: ', valides + nulls, ' votes from ', totalvoters, ' voters (', ((valides+nulls)/totalvoters)*100:0:2, '%)')
+	else writeln('Participation: ', valides + nulls, ' votes from ', totalvoters, ' voters (0.00%)')
+
+end;
