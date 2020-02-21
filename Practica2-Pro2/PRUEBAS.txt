@@ -1,0 +1,79 @@
+FUNCTION insertItemC(d:tItemC; var LC:tListC):boolean;  {Permite insertar un item y mover los demas una posicion dependiendo de donde se inserte}
+var p,q:integer;  param1, param2: tItemC; 
+begin
+  if LC.fin=MAXC then 
+   insertItemC:=FALSE
+  else begin
+    insertItemC:=TRUE; 
+    q:=1;
+    LC.fin:=LC.fin + 1;
+    param1:=LC.database[q];
+    if (param1.centername = ' ') then LC.database[q]:=d
+    else begin
+      param1:=LC.database[q];
+      param2:=LC.database[q+1];
+      while (d.centername > param1.centername) and (d.centername < param2.centername) do begin
+        q:=q+1;
+        param1:=LC.database[q];
+        param2:=LC.database[q+1];
+      end;
+      p:=q;
+      for q:=LC.fin downto p+1 do LC.database[q]:= LC.database[q-1];
+    end;
+      LC.database[p]:=d;
+  end;
+end;
+
+
+
+FUNCTION insertCenter(cn: tCenterName; vt: tNumVotes; var M:tManager): boolean;
+var d:tItemC; p:tPosC; e,f:tItem; 
+begin
+	p:=findItemC(cn, M);
+	if p <> NULLC then begin
+	  insertCenter:=TRUE;
+	  e.partyname:=BLANKVOTE;
+	  e.numvotes:=0;
+	  f.partyname:=NULLVOTE;
+	  f.numvotes:=0;
+	  if (insertItem(e, L) and insertItem(f, L)) then begin
+	    d.centername:=cn;
+	    d.totalvoters:=vt;
+	    d.validvotes:=0;
+	    d.partylist:=L;
+	    if insertItemC(d, M) then begin
+	      p:=findItemC(cn, M);
+	    end;
+	  end;
+	end
+	else insertCenter:=FALSE;	
+end;
+
+PROCEDURE showStats(M:tManager);
+var allvotes:tNumVotes; p:tPosC; d:tItemC; s,t:tPosL; nv, param: tItem;
+begin 
+	nv.partyname:= NULLVOTE;
+	nv.numvotes:=0;
+	allvotes:=0;
+	for p:= firstC(M) to lastC(M) do begin
+	  d:= getItemC(p,M);
+	  writeln('Center ', d.centername);
+	  if findItem(NULLVOTE, d.partylist) = NULL then insertItem(nv, d.partylist);
+	  s:= first(d.partylist);
+	  while s <> NULL do begin	
+	    allvotes:= allvotes + getItem(s, d.partylist).numvotes;
+	    s:=next(s, d.partylist)
+	  end;
+	  t:=first(d.partylist);
+	  while t <> NULL do begin
+	    param:= getItem(t, d.partylist);
+	    if (param.partyname = NULLVOTE) then writeln('Party ', param.partyname, ' numvotes ', param.numvotes)
+	    else begin
+	      if (d.validvotes = 0) then writeln('Party ', param.partyname, ' numvotes ', param.numvotes, ' (0.00%)')
+	      else writeln('Party ', param.partyname, ' numvotes ', param.numvotes, '(', (param.numvotes/M.database[p].validvotes)*100:2:2, '%)');
+	    end;
+	    t:=next(t, d.partylist);
+	  end;
+	  writeln('Participation: ', allvotes, ' votes from ', d.totalvoters, ' voters (', (allvotes/M.database[p].totalvoters)*100:2:2, '%)');
+	end;	    
+end;       
